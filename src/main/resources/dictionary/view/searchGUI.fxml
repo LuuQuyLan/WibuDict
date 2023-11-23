@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.shape.*?>
+<?import javafx.scene.effect.*?>
+<?import javafx.scene.image.*?>
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="510.0" prefWidth="769.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <Pane layoutX="8.0" prefHeight="91.0" prefWidth="751.0">
+         <children>
+            <ImageView fitHeight="84.0" fitWidth="85.0" layoutX="23.0" layoutY="6.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../../Icon/logo.png" />
+               </image>
+            </ImageView>
+            <Pane fx:id="searchBox" layoutX="226.0" layoutY="20.0" prefHeight="35.0" prefWidth="292.0" styleClass="search-box" stylesheets="@../../Image/style.css">
+               <children>
+                  <TextField fx:id="searchField" layoutX="29.0" layoutY="1.0" prefHeight="35.0" prefWidth="292.0" promptText="Enter the word to search ..." styleClass="search-field" stylesheets="@../../Image/style.css" />
+                  <ImageView fitHeight="20.0" fitWidth="20.0" layoutX="11.0" layoutY="8.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../../Icon/search.png" />
+                     </image>
+                  </ImageView>
+                  <Button layoutX="256.0" layoutY="3.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="29.0" styleClass="cancel-button" stylesheets="@../../Image/style.css">
+                     <graphic>
+                        <ImageView fx:id="cancelButton" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../../Icon/cancelButton.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </Button>
+               </children>
+            </Pane>
+         </children>
+      </Pane>
+      <AnchorPane layoutY="92.0" prefHeight="415.0" prefWidth="769.0">
+         <children>
+            <AnchorPane layoutX="2.0" prefHeight="407.0" prefWidth="263.0" />
+            <AnchorPane layoutX="264.0" prefHeight="415.0" prefWidth="500.0">
+               <children>
+                  <Pane layoutX="-2.0" prefHeight="45.0" prefWidth="500.0" styleClass="title" stylesheets="@../../Image/style.css">
+                     <children>
+                        <Label layoutX="14.0" prefHeight="45.0" prefWidth="157.0" text="Definition">
+                           <font>
+                              <Font name="System Bold Italic" size="18.0" />
+                           </font>
+                           <graphic>
+                              <ImageView fitHeight="37.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../../Icon/Ảnh%20png/definition.png" />
+                                 </image>
+                                 <effect>
+                                    <Glow level="0.33" />
+                                 </effect>
+                              </ImageView>
+                           </graphic></Label>
+                     </children>
+                  </Pane>
+                  <Pane layoutX="7.0" layoutY="51.0" prefHeight="355.0" prefWidth="490.0">
+                     <children>
+                        <Line endY="52.0" startX="490.0" startY="52.0" />
+                     </children>
+                  </Pane>
+               </children>
+            </AnchorPane>
+         </children>
+      </AnchorPane>
+   </children>
+</AnchorPane>
