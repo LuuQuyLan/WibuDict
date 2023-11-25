@@ -12,9 +12,9 @@ public class Main extends Application {
     @Override
     public void start(Stage stage) throws IOException {
         try {
-            Parent root = FXMLLoader.load(getClass().getResource("/dictionary/view/hello-view.fxml"));
+            Parent root = FXMLLoader.load(getClass().getResource("/dictionary/view/appGUI.fxml"));
             Scene scene = new Scene(root);
-            stage.setTitle("Dictionary");
+            stage.setTitle("Wibu Dictionary");
             stage.setScene(scene);
             stage.show();
         } catch (Exception e) {

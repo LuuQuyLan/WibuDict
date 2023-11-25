@@ -3,6 +3,7 @@ module dictionary.dictionary {
     requires javafx.fxml;
 
     requires org.controlsfx.controls;
+    requires org.json;
 
     opens   dictionary.dictionary to javafx.fxml;
     exports dictionary.dictionary;
