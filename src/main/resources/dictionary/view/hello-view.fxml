@@ -1,37 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.text.*?>
-<?import javafx.scene.image.*?>
-<?import java.lang.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="510.0" prefWidth="765.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="430.0" prefWidth="430.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <ImageView fitHeight="544.0" fitWidth="788.0" layoutX="-17.0" layoutY="-6.0" pickOnBounds="true" preserveRatio="true">
-         <image>
-            <Image url="@../../Icon/background.jpg" />
-         </image>
-      </ImageView>
-      <Button layoutX="219.0" layoutY="395.0" mnemonicParsing="false" prefHeight="47.0" prefWidth="114.0" styleClass="title" stylesheets="@../../Image/style.css" text="Dictionary" textFill="WHITE">
-         <font>
-            <Font name="System Bold" size="18.0" />
-         </font></Button>
-      <Button layoutX="424.0" layoutY="395.0" mnemonicParsing="false" prefHeight="47.0" prefWidth="114.0" styleClass="title" stylesheets="@../../Image/style.css" text="Game" textFill="WHITE">
-         <font>
-            <Font name="System Bold" size="18.0" />
-         </font></Button>
-      <Label layoutX="151.0" layoutY="185.0" stylesheets="@../../Image/style.css" text="Wibu Dictionary" textFill="#0066cc">
-         <font>
-            <Font name="System Bold" size="59.0" />
-         </font>
-      </Label>
-      <ImageView fitHeight="107.0" fitWidth="94.0" layoutX="330.0" layoutY="91.0" pickOnBounds="true" preserveRatio="true">
-         <image>
-            <Image url="@../../Icon/logo.png" />
-         </image>
-      </ImageView>
+      <Button layoutX="182.0" layoutY="181.0" mnemonicParsing="false" text="Button" />
+      <Button layoutX="299.0" layoutY="181.0" mnemonicParsing="false" text="Button" />
    </children>
 </AnchorPane>
