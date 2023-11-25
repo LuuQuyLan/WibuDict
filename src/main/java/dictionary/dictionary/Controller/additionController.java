@@ -63,20 +63,17 @@ public class additionController implements Initializable {
         Optional<ButtonType> option = alertConfirmation.showAndWait();
         String englishWord = wordTargetInput.getText().trim();
         String meaning = wordExplanationInput.getText().trim();
-
         if (option.get() == ButtonType.OK) {
             Word word = new Word(englishWord, meaning, "");
             if (!isExistSpelling()) {
                 dictionary.add(word);
                 System.out.println(dictionary.get(dictionary.size() - 1));
                 showSuccessAlert();
-            } else {
-                System.out.println("Alo Ola 123456");
             }
             addButton.setDisable(true);
             resetInput();
         } else if (option.get() == ButtonType.CANCEL)
-            alerts.showAlertInfo("Information", "Thay đổi không được công nhận.");
+            alerts.showAlertInfo("Information", "Changes not recognized.");
     }
 
     private void resetInput() {
