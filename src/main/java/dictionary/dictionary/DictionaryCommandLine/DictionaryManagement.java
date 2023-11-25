@@ -1,95 +1,105 @@
 package dictionary.dictionary.DictionaryCommandLine;
+import dictionary.dictionary.DictionaryCommandLine.Dictionary;
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.*;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 public class DictionaryManagement {
+    private Dictionary dictionary = new Dictionary();
+    String filePath = "dictionary/wordList.txt";
 
+    /**
+     * import Dictionary form filePath.
+     */
     public void insertFromFile(Dictionary dictionary,String filePath) {
         try {
-            BufferedReader reader = new BufferedReader(new FileReader(filePath));
-            String line;
+            // Read the entire content of the file as a string
+            String content = new String(Files.readAllBytes(Path.of(filePath)));
 
-            while ((line = reader.readLine()) != null) {
-                String[] parts = line.split("\t");
-                //for (int i = 0; i < parts.length; i++) System.out.println(parts[i]);
-                if (parts.length >= 2) {
-                    String wordTarget = parts[0].trim();
-                    String wordExplain = parts[1].trim();
-                    Word word = new Word(wordTarget, wordExplain);
-                    dictionary.insertWord(word);
-                }
+            // Parse the string content to create a JSONArray
+            JSONArray jsonArray = new JSONArray(content);
+
+            // Iterate through the JSONArray
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject jsonObject = jsonArray.getJSONObject(i);
+
+                // Retrieve fields from the JSONObject
+                String name = jsonObject.getString("name");
+                String type = jsonObject.getString("type");
+                String definition = jsonObject.getString("definition");
+
+                // Do something with the retrieved data...
+//                System.out.println("Name: " + name);
+//                System.out.println("Type: " + type);
+//                System.out.println("Definition: " + definition);
+//                System.out.println();
+                Word newWord = new Word(name, definition, type);
+
+                dictionary.add(newWord);
             }
 
-            reader.close();
-            System.out.println("Successfully inserted words from file.");
         } catch (IOException e) {
             System.out.println("Error reading file: " + e.getMessage());
+        } catch (JSONException e) {
+            System.out.println("Error parsing JSON: " + e.getMessage());
         }
     }
 
+    public int lookUpWord(String keyWord) {
+        try {
+            int left = 0;
+            int right = dictionary.size() - 1;
+            while (left <= right) {
+                int mid = left + (right - left) / 2;
+                int res = dictionary.get(mid).getWordTarget().compareTo(keyWord);
+                if (res == 0) return mid;
+                if (res <= 0) left = mid + 1;
+                else right = mid - 1;
+            }
+        } catch (NullPointerException e) {
+            System.out.println("Null Exception.");
+        }
+        return -1;
+    }
 
-    public void dictionaryLookup(Dictionary dictionary) {
-        Scanner scanner = new Scanner(System.in);
-        System.out.print("Enter a word to lookup: ");
-        String word = scanner.nextLine();
-        Word foundWord = dictionary.lookupWord(word);
-        if (foundWord != null) {
-            System.out.println("Meaning: " + foundWord.getWordExplain());
-        } else {
-            System.out.println("Word not found in the dictionary.");
+
+    public void addWord(Word word) {
+        dictionary.push(word);
+        exportToFile(dictionary, filePath);
+    }
+
+    public void deleteWord(Dictionary dictionary, int index, String path) {
+        try {
+            dictionary.remove(index);
+            dictionary.setAllWords(dictionary);
+            exportToFile(dictionary, path);
+        } catch (NullPointerException e) {
+            System.out.println("Null Exception.");
         }
     }
 
-    public void addWord(Dictionary dictionary) {
-        Scanner scanner = new Scanner(System.in);
-        System.out.print("Enter the English word: ");
-        String wordTarget = scanner.nextLine();
-
-        System.out.print("Enter the Vietnamese meaning: ");
-        String wordExplain = scanner.nextLine();
-
-        Word word = new Word(wordTarget, wordExplain);
-        dictionary.insertWord(word);
-        System.out.println("Word added to the dictionary.");
-    }
-
-    public void removeWord(Dictionary dictionary) {
-        Scanner scanner = new Scanner(System.in);
-        System.out.print("Enter the word to remove: ");
-        String wordTarget = scanner.nextLine();
-
-        boolean removed = dictionary.removeWord(wordTarget);
-        if (removed) {
-            System.out.println("Word removed from the dictionary.");
-        } else {
-            System.out.println("Word not found in the dictionary.");
+    public void updateWord(Dictionary dictionary, int index, String meaning, String path) {
+        try {
+            dictionary.get(index).setWordExplain(meaning);
+            exportToFile(dictionary, path);
+        } catch (NullPointerException e) {
+            System.out.println("Null Exception.");
         }
     }
 
-    public void updateWord(Dictionary dictionary) {
-        Scanner scanner = new Scanner(System.in);
-        System.out.print("Enter the word to update: ");
-        String wordTarget = scanner.nextLine();
-
-        Word word = dictionary.lookupWord(wordTarget);
-        if (word != null) {
-            System.out.print("Enter the new Vietnamese meaning: ");
-            String wordExplain = scanner.nextLine();
-
-            word.setWordExplain(wordExplain);
-            System.out.println("Word updated in the dictionary.");
-        } else {
-            System.out.println("Word not found in the dictionary.");
-        }
-    }
-
-    public void dictionaryExportToFile(Dictionary dictionary, String filePath) {
+    /**
+     * export the dictionary into file.
+     */
+    public void exportToFile(Dictionary dictionary, String filePath) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
             List<Word> words = dictionary.getAllWords();
             for (Word word : words) {
-                writer.write(word.getWordTarget() + "\t" + word.getWordExplain());
+                writer.write("name: " + word.getWordTarget() + "\ndefinition: " + word.getWordExplain());
                 writer.newLine();
             }
-            System.out.println("Dictionary exported to file.");
         } catch (IOException e) {
             e.printStackTrace();
         }
