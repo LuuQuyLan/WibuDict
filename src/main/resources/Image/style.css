@@ -24,3 +24,17 @@
     -fx-background-radius: 5;
     -fx-border-radius: 5;
 }
+.success-alert{
+    -fx-font-size: 14px;
+    -fx-text-fill: #009432;
+    -fx-background-color:  #CAF7D8;
+     -fx-background-radius: 5;
+     -fx-border-radius: 5;
+}
+.warning-alert{
+    -fx-font-size: 12px;
+    -fx-text-fill: #c41b1b;
+    -fx-background-color:  #F8DADA;
+    -fx-background-radius: 2;
+    -fx-border-radius: 2;
+}
