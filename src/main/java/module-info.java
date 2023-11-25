@@ -3,6 +3,10 @@ module dictionary.dictionary {
     requires javafx.fxml;
 
     requires org.controlsfx.controls;
+    requires java.net.http;
+    requires org.json;
+    requires com.fasterxml.jackson.core;
+    requires com.fasterxml.jackson.databind;
 
     opens   dictionary.dictionary to javafx.fxml;
     exports dictionary.dictionary;
