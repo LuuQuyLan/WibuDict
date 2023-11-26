@@ -7,7 +7,7 @@ import java.util.List;
 
 
 public class Dictionary extends ArrayList<Word> {
-    static List<Word> words;
+    public static List<Word> words;
 
     public Dictionary() {
         words = new ArrayList<>();

@@ -99,7 +99,7 @@
                      <children>
                         <Line endY="52.0" startX="490.0" startY="52.0" />
                         <TextArea fx:id="explanation" layoutX="2.0" layoutY="54.0" prefHeight="303.0" prefWidth="486.0" />
-                        <Button fx:id="speakerButton" layoutX="297.0" layoutY="10.0" mnemonicParsing="false" prefHeight="32.0" prefWidth="50.0">
+                        <Button fx:id="speakerButton" layoutX="297.0" layoutY="10.0" mnemonicParsing="false" onAction="#handleClickSpeakerButton" prefHeight="32.0" prefWidth="50.0">
                            <graphic>
                               <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
                                  <image>

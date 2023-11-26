@@ -127,15 +127,9 @@ public class searchController implements Initializable {
         alerts.showAlertInfo("Information", "Now you can edit this word's explanation!");
     }
 
-    //@FXML
-    //private void handleClickSoundButton() {
-    //    System.setProperty("freetts.voices", "com.sun.speech.freetts.en.us.cmu_us_kal.KevinVoiceDirectory");
-    //    Voice voice = VoiceManager.getInstance().getVoice("kevin16");
-    //    if (voice != null) {
-    //        voice.allocate();
-    //        voice.speak(dictionary.get(indexOfWord).getWordTarget());
-    //    } else throw new IllegalStateException("Cannot find voice: kevin16");
-    //}
+    @FXML
+    private void handleClickSpeakerButton() {
+    }
 
     @FXML
     private void handleClickSaveButton() {
