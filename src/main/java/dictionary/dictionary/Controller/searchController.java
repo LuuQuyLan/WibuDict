@@ -14,6 +14,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 
@@ -26,14 +27,13 @@ public class searchController implements Initializable {
     private Dictionary dictionary = new Dictionary();
     private DictionaryManagement dictionaryManagement = new DictionaryManagement();
 
-    private final String filePath = "dictionary/wordList.json";
+    private final String filePath = "src/main/resources/dictionary/wordList.txt";
     ObservableList<String> list = FXCollections.observableArrayList();
     private Alerts alerts = new Alerts();
     private int indexOfWord;
     private int firstIndexOfListFound = 0;
 
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        System.out.println("abc");
         dictionaryManagement.insertFromFile(dictionary, filePath);
         setListResult();
 
@@ -44,16 +44,18 @@ public class searchController implements Initializable {
         editButton.setDisable(true);
         deleteButton.setDisable(true);
         saveButton.setVisible(false);
-
-        searchField.setOnKeyTyped(keyEvent -> {
-            if (keyEvent.getCode() == KeyCode.ENTER) {
-                if (!searchField.getText().isEmpty()) {
-                    // Call the search function
-                    cancelButton.setVisible(true);
+        searchField.setOnMouseClicked(keyEvent -> {
+            searchField.setText("");
+            setListResult();
+        });
+        searchField.setOnKeyPressed(keyEvent -> {
+            if (!searchField.getText().isEmpty()) {
+                cancelButton.setVisible(true);
+                if (keyEvent.getCode() == KeyCode.ENTER) {
                     handleOnKeyTyped();
-                } else {
-                    cancelButton.setVisible(false);
                 }
+            } else {
+                cancelButton.setVisible(false);
             }
         });
 
@@ -71,7 +73,6 @@ public class searchController implements Initializable {
 
     }
 
-
     @FXML
     private void handleOnKeyTyped() {
         list.clear();
@@ -82,27 +83,40 @@ public class searchController implements Initializable {
             setListResult();
         } else {
             firstIndexOfListFound = dictionary.dictionarySearchIndex(list.get(0).toString());
-            setListResult();
         }
+    }
+
+    private void setListResult() {
+        list.clear();
+        for (int i = firstIndexOfListFound; i < firstIndexOfListFound + 15 && i + 15 < dictionary.size(); i++) {
+            list.add(dictionary.get(i).getWordTarget());
+        }
+        listResult.setItems(list);
     }
 
     @FXML
     private void handleMouseClickAWord(MouseEvent arg0) {
         String selectedWord = listResult.getSelectionModel().getSelectedItem();
-        if (selectedWord != null) {
+        if (selectedWord != null && !list.isEmpty()) {
             indexOfWord = dictionary.dictionarySearchIndex(selectedWord);
-            if (indexOfWord == -1) return;
-            String wordTarget = dictionary.get(indexOfWord).getWordTarget();
-            String wordExplain = dictionary.get(indexOfWord).getWordExplain();
+            if (indexOfWord >= 0 && indexOfWord < dictionary.size()) {
+                String wordTarget = dictionary.get(indexOfWord).getWordTarget();
+                String wordExplain = dictionary.get(indexOfWord).getWordExplain();
 
-            selectedWordTarget.setText(wordTarget);
-            explanation.setText(wordExplain);
+                selectedWordTarget.setText(wordTarget);
+                explanation.setText(wordExplain);
 
-            selectedWordTarget.setVisible(true);
-            explanation.setVisible(true);
-            speakerButton.setDisable(false);
-            editButton.setDisable(false);
-            deleteButton.setDisable(false);
+                selectedWordTarget.setVisible(true);
+                explanation.setVisible(true);
+                explanation.setEditable(false);
+                speakerButton.setDisable(false);
+                editButton.setDisable(false);
+                deleteButton.setDisable(false);
+            } else {
+                System.out.println("Word not found!");
+            }
+        } else {
+            System.out.println("Selected word or list is null or empty!");
         }
     }
 
@@ -149,12 +163,6 @@ public class searchController implements Initializable {
         } else alerts.showAlertInfo("Information", "Changes not recognized!");
     }
 
-    private void setListResult() {
-        for (int i = firstIndexOfListFound; i < firstIndexOfListFound + 15 && i + 15 < dictionary.size(); i++) {
-            list.add(dictionary.get(i).getWordTarget());
-        }
-        listResult.setItems(list);
-    }
 
     public void transferScene(ActionEvent event, String path) {
         try {

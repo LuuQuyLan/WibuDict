@@ -24,9 +24,9 @@ public class Dictionary extends ArrayList<Word> {
      * returns the exact index of the wordTarget in the dictionary applying binary searcher.
      */
     public int binarySearchIndex(int start, int end, String wordTarget) {
-        if (end < start) return -1;
+        if (end < start) return start;
         int mid = start + (end - start) / 2;
-        Word word = words.get(mid);
+        Word word = this.get(mid);
         String currentWordTarget = word.getWordTarget();
         if (currentWordTarget.startsWith(wordTarget)) {
             return mid;
@@ -66,25 +66,25 @@ public class Dictionary extends ArrayList<Word> {
         ObservableList<String> result = FXCollections.observableArrayList();
 
         // Binary search for the starting index of wordTarget
-        int index = binarySearchIndex(0, words.size() - 1, wordTarget);
+        int index = binarySearchIndex(0, this.size() - 1, wordTarget);
 
         if (index >= 0) {
             // Add the word at the found index
-            result.add(words.get(index).getWordTarget());
+            result.add(this.get(index).getWordTarget());
 
             // Explore left and right for words starting with wordTarget
             int left = index - 1, right = index + 1;
 
             while (left >= 0 && result.size() < 15) {
-                String leftWord = words.get(left--).getWordTarget();
+                String leftWord = this.get(left--).getWordTarget();
                 if (leftWord.startsWith(wordTarget)) {
                     result.add(leftWord);
                 } else {
                     break;
                 }
             }
-            while (right < words.size() && result.size() < 15) {
-                String rightWord = words.get(right++).getWordTarget();
+            while (right < this.size() && result.size() < 15) {
+                String rightWord = this.get(right++).getWordTarget();
                 if (rightWord.startsWith(wordTarget)) {
                     result.add(rightWord);
                 } else {

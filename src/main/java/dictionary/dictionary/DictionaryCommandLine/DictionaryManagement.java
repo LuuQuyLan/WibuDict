@@ -9,7 +9,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 public class DictionaryManagement {
     private Dictionary dictionary = new Dictionary();
-    private final String filePath = "dictionary/wordList.json";
+    private final String filePath = "src/main/resources/dictionary/wordList.txt";
 
     /**
      * import Dictionary form filePath.
@@ -29,8 +29,6 @@ public class DictionaryManagement {
                 String name = jsonObject.getString("name");
                 String type = jsonObject.getString("type");
                 String definition = jsonObject.getString("definition");
-
-                System.out.println(name);
 
                 Word newWord = new Word(name, definition, type);
                 dictionary.add(newWord);
