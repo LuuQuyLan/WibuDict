@@ -125,7 +125,7 @@
                               </ImageView>
                            </graphic>
                         </Button>
-                        <Label fx:id="wordTarget" layoutX="5.0" layoutY="5.0" prefHeight="40.0" prefWidth="273.0" text="   hello">
+                        <Label fx:id="selectedWordTarget" layoutX="5.0" layoutY="5.0" prefHeight="40.0" prefWidth="273.0" text="   hello">
                            <font>
                               <Font name="System Bold" size="20.0" />
                            </font>

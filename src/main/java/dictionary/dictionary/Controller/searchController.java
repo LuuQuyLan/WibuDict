@@ -6,7 +6,6 @@ import dictionary.dictionary.DictionaryCommandLine.DictionaryManagement;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -15,10 +14,9 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
+
 
 import java.io.IOException;
 import java.net.URL;
@@ -27,66 +25,64 @@ import java.util.ResourceBundle;
 public class searchController implements Initializable {
     private Dictionary dictionary = new Dictionary();
     private DictionaryManagement dictionaryManagement = new DictionaryManagement();
-    private final String path = "src/main/resources/dictionary/wordList.txt";
-    ObservableList list = FXCollections.observableArrayList();
+
+    private final String filePath = "dictionary/wordList.json";
+    ObservableList<String> list = FXCollections.observableArrayList();
     private Alerts alerts = new Alerts();
     private int indexOfWord;
     private int firstIndexOfListFound = 0;
 
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        dictionaryManagement.insertFromFile(dictionary, path);
-        setListDefault(0);
-        searchField.setOnKeyTyped(new EventHandler<KeyEvent>() {
-            @Override
-            public void handle(KeyEvent keyEvent) {
-                if (searchField.getText().isEmpty()) {
-                    cancelButton.setVisible(false);
-                    setListDefault(0);
-                } else {
+        System.out.println("abc");
+        dictionaryManagement.insertFromFile(dictionary, filePath);
+        setListResult();
+
+        cancelButton.setVisible(false);
+        selectedWordTarget.setVisible(false);
+        explanation.setVisible(false);
+        speakerButton.setDisable(true);
+        editButton.setDisable(true);
+        deleteButton.setDisable(true);
+        saveButton.setVisible(false);
+
+        searchField.setOnKeyTyped(keyEvent -> {
+            if (keyEvent.getCode() == KeyCode.ENTER) {
+                if (!searchField.getText().isEmpty()) {
+                    // Call the search function
                     cancelButton.setVisible(true);
                     handleOnKeyTyped();
-                }
-                if (keyEvent.getCode() == KeyCode.ENTER) {
-                    String searchText = searchField.getText();
-                    if (!searchText.isEmpty()) {
-                        // Call your search function here, passing searchText
-                        dictionary.searcherWord(searchText);
-                    } else {
-                        cancelButton.setVisible(false);
-                        setListDefault(0);
-                    }
+                } else {
+                    cancelButton.setVisible(false);
                 }
             }
         });
-        cancelButton.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                searchField.clear();
-                cancelButton.setVisible(false);
-                setListDefault(0);
-            }
+
+        cancelButton.setOnAction(event -> {
+            searchField.clear();
+            cancelButton.setVisible(false);
+            firstIndexOfListFound = 0;
+            setListResult();
         });
+
         backButton.setOnAction(event ->
                 transferScene(event, "/dictionary/view/appGUI.fxml"));
         additionButton.setOnAction(event ->
                 transferScene(event, "/dictionary/view/additionGUI.fxml"));
 
-        explanation.setEditable(false);
-        cancelButton.setVisible(false);
     }
 
 
     @FXML
     private void handleOnKeyTyped() {
         list.clear();
-        String searchKey = searchField.getText().trim();
-        list = dictionary.searcherWord(searchKey);
+        String searchText = searchField.getText();
+        list = dictionary.searcherWord(searchText);
         if (list.isEmpty()) {
-            setListDefault(firstIndexOfListFound);
+            firstIndexOfListFound = 0;
+            setListResult();
         } else {
-            headerListResult.setText("Kết quả");
-            listResult.setItems(list);
             firstIndexOfListFound = dictionary.dictionarySearchIndex(list.get(0).toString());
+            setListResult();
         }
     }
 
@@ -99,17 +95,14 @@ public class searchController implements Initializable {
             String wordTarget = dictionary.get(indexOfWord).getWordTarget();
             String wordExplain = dictionary.get(indexOfWord).getWordExplain();
 
-            // Display the word's target in the headerExplanation
-            headerExplanation.getChildren().clear();
-            Label headerLabel = new Label(wordTarget);
-            headerExplanation.getChildren().add(headerLabel);
-
-            // Display the word's explanation in the explanation TextArea
+            selectedWordTarget.setText(wordTarget);
             explanation.setText(wordExplain);
-            headerExplanation.setVisible(true);
+
+            selectedWordTarget.setVisible(true);
             explanation.setVisible(true);
-            explanation.setEditable(false);
-            saveButton.setVisible(false);
+            speakerButton.setDisable(false);
+            editButton.setDisable(false);
+            deleteButton.setDisable(false);
         }
     }
 
@@ -126,7 +119,7 @@ public class searchController implements Initializable {
     //    Voice voice = VoiceManager.getInstance().getVoice("kevin16");
     //    if (voice != null) {
     //        voice.allocate();
-    //        voice.speak(dictionary.get(indexOfSelectedWord).getWordTarget());
+    //        voice.speak(dictionary.get(indexOfWord).getWordTarget());
     //    } else throw new IllegalStateException("Cannot find voice: kevin16");
     //}
 
@@ -135,7 +128,8 @@ public class searchController implements Initializable {
         Alert alertConfirmation = alerts.alertConfirmation("Update", "Are you sure you want to update this word?");
         Optional<ButtonType> option = alertConfirmation.showAndWait();
         if (option.get() == ButtonType.OK) {
-            dictionaryManagement.updateWord(dictionary, indexOfWord, explanation.getText(), path);
+            indexOfWord = dictionary.dictionarySearchIndex(selectedWordTarget.getText());
+            dictionaryManagement.updateWord(dictionary, indexOfWord, explanation.getText());
             alerts.showAlertInfo("Information", "Successfully updated!");
         } else alerts.showAlertInfo("Information", "Changes not recognized!");
         saveButton.setVisible(false);
@@ -148,19 +142,18 @@ public class searchController implements Initializable {
         alertWarning.getButtonTypes().add(ButtonType.CANCEL);
         Optional<ButtonType> option = alertWarning.showAndWait();
         if (option.get() == ButtonType.OK) {
-            dictionaryManagement.deleteWord(dictionary, indexOfWord, path);
+            indexOfWord = dictionary.dictionarySearchIndex(selectedWordTarget.getText());
+            dictionaryManagement.deleteWord(dictionary, indexOfWord);
             refreshAfterDeleting();
             alerts.showAlertInfo("Information", "Successfully deleted");
         } else alerts.showAlertInfo("Information", "Changes not recognized!");
     }
-    private void setListDefault(int index) {
-        list.clear();
-        for (int i = index; i < index + 15; i++) {
+
+    private void setListResult() {
+        for (int i = firstIndexOfListFound; i < firstIndexOfListFound + 15 && i + 15 < dictionary.size(); i++) {
             list.add(dictionary.get(i).getWordTarget());
         }
         listResult.setItems(list);
-        wordTarget.setText(dictionary.get(index).getWordTarget());
-        explanation.setText(dictionary.get(index).getWordExplain());
     }
 
     public void transferScene(ActionEvent event, String path) {
@@ -176,12 +169,12 @@ public class searchController implements Initializable {
     }
     private void refreshAfterDeleting() {
         for (int i = 0; i < list.size(); i++)
-            if (list.get(i).equals(wordTarget.getText())) {
+            if (list.get(i).equals(selectedWordTarget.getText())) {
                 list.remove(i);
                 break;
             }
         listResult.setItems(list);
-        headerExplanation.setVisible(false);
+        selectedWordTarget.setVisible(false);
         explanation.setVisible(false);
     }
 
@@ -194,16 +187,13 @@ public class searchController implements Initializable {
     private Button cancelButton, backButton, additionButton, speakerButton, editButton, deleteButton, saveButton;
 
     @FXML
-    private Label wordTarget, headerListResult ;
+    private Label selectedWordTarget;
 
     @FXML
     private TextArea explanation;
 
     @FXML
     private ListView<String> listResult;
-
-    @FXML
-    private Pane headerExplanation;
 
 }
 

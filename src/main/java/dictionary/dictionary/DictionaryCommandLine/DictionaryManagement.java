@@ -1,5 +1,5 @@
 package dictionary.dictionary.DictionaryCommandLine;
-import dictionary.dictionary.DictionaryCommandLine.Dictionary;
+
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -9,7 +9,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 public class DictionaryManagement {
     private Dictionary dictionary = new Dictionary();
-    String filePath = "dictionary/wordList.txt";
+    private final String filePath = "dictionary/wordList.json";
 
     /**
      * import Dictionary form filePath.
@@ -21,7 +21,6 @@ public class DictionaryManagement {
 
             // Parse the string content to create a JSONArray
             JSONArray jsonArray = new JSONArray(content);
-
             // Iterate through the JSONArray
             for (int i = 0; i < jsonArray.length(); i++) {
                 JSONObject jsonObject = jsonArray.getJSONObject(i);
@@ -31,15 +30,12 @@ public class DictionaryManagement {
                 String type = jsonObject.getString("type");
                 String definition = jsonObject.getString("definition");
 
-                // Do something with the retrieved data...
-//                System.out.println("Name: " + name);
-//                System.out.println("Type: " + type);
-//                System.out.println("Definition: " + definition);
-//                System.out.println();
-                Word newWord = new Word(name, definition, type);
+                System.out.println(name);
 
+                Word newWord = new Word(name, definition, type);
                 dictionary.add(newWord);
             }
+            Collections.sort(dictionary);
 
         } catch (IOException e) {
             System.out.println("Error reading file: " + e.getMessage());
@@ -48,43 +44,30 @@ public class DictionaryManagement {
         }
     }
 
-    public int lookUpWord(String keyWord) {
+
+    public void addWord(Dictionary dictionary, int index, Word word) {
         try {
-            int left = 0;
-            int right = dictionary.size() - 1;
-            while (left <= right) {
-                int mid = left + (right - left) / 2;
-                int res = dictionary.get(mid).getWordTarget().compareTo(keyWord);
-                if (res == 0) return mid;
-                if (res <= 0) left = mid + 1;
-                else right = mid - 1;
-            }
+            dictionary.add(index, word);
+            exportToFile(dictionary, filePath);
         } catch (NullPointerException e) {
             System.out.println("Null Exception.");
         }
-        return -1;
     }
 
-
-    public void addWord(Word word) {
-        dictionary.push(word);
-        exportToFile(dictionary, filePath);
-    }
-
-    public void deleteWord(Dictionary dictionary, int index, String path) {
+    public void deleteWord(Dictionary dictionary, int index) {
         try {
             dictionary.remove(index);
             dictionary.setAllWords(dictionary);
-            exportToFile(dictionary, path);
+            exportToFile(dictionary, filePath);
         } catch (NullPointerException e) {
             System.out.println("Null Exception.");
         }
     }
 
-    public void updateWord(Dictionary dictionary, int index, String meaning, String path) {
+    public void updateWord(Dictionary dictionary, int index, String wordExplain) {
         try {
-            dictionary.get(index).setWordExplain(meaning);
-            exportToFile(dictionary, path);
+            dictionary.get(index).setWordExplain(wordExplain);
+            exportToFile(dictionary, filePath);
         } catch (NullPointerException e) {
             System.out.println("Null Exception.");
         }
@@ -97,7 +80,9 @@ public class DictionaryManagement {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
             List<Word> words = dictionary.getAllWords();
             for (Word word : words) {
-                writer.write("name: " + word.getWordTarget() + "\ndefinition: " + word.getWordExplain());
+                writer.write("{\n\t\"name\": " + word.getWordTarget() + "\",\n"
+                            + "\"type\": " + "" + "\",\n"
+                            + "\"definition\": " + word.getWordExplain() + "\"\n},\n");
                 writer.newLine();
             }
         } catch (IOException e) {

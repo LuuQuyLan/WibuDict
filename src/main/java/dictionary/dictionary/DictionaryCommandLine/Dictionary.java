@@ -4,7 +4,6 @@ import javafx.collections.ObservableList;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Observable;
 
 
 public class Dictionary extends ArrayList<Word> {
@@ -13,95 +12,90 @@ public class Dictionary extends ArrayList<Word> {
     public Dictionary() {
         words = new ArrayList<>();
     }
-    public void push(Word word) {
-        int index = searchIndex(0, words.size()-1, word.getWordTarget());
-        if (index <= words.size() && index >= 0) words.add(index, word);
-    }
-
-    public int searchIndex(int start, int end, String wordTarget) {
-        if (end < start) return start;
-        int mid = start + (end - start) / 2;
-        if (mid == words.size()) return mid;
-        Word word = words.get(mid);
-        int compare = word.getWordTarget().compareTo(wordTarget);
-        if (compare == 0) return -1;
-        if (compare > 0) return searchIndex(start, mid - 1, wordTarget);
-        return searchIndex(mid + 1, end, wordTarget);
-    }
 
     public int dictionarySearchIndex(String wordTarget) {
-        return searchIndex(0, this.size()-1, wordTarget);
+        return binarySearchIndex(0, this.size()-1, wordTarget);
+    }
+    public Word dictionarySearchWord(String wordTarget) {
+        return binarySearchWord(0, this.size()-1, wordTarget);
     }
 
-    public Word binaryLookup(int start, int end, String wordTarget) {
+    /**
+     * returns the exact index of the wordTarget in the dictionary applying binary searcher.
+     */
+    public int binarySearchIndex(int start, int end, String wordTarget) {
+        if (end < start) return -1;
+        int mid = start + (end - start) / 2;
+        Word word = words.get(mid);
+        String currentWordTarget = word.getWordTarget();
+        if (currentWordTarget.startsWith(wordTarget)) {
+            return mid;
+        }
+        int compare = currentWordTarget.compareTo(wordTarget);
+        if (compare == 0) return mid;
+        if (compare > 0) return binarySearchIndex(start, mid - 1, wordTarget);
+        return binarySearchIndex(mid + 1, end, wordTarget);
+    }
+
+    /**
+     * returns the exact word of the wordTarget in the dictionary applying binary searcher.
+     */
+    public Word binarySearchWord(int start, int end, String wordTarget) {
         if (end >= start) {
             int mid = start + (end - start) / 2;
             Word word = this.get(mid);
-            System.out.println(word);
-            String currentSpelling = word.getWordTarget();
+            String currentWordTarget = word.getWordTarget();
 
-            int compare = currentSpelling.compareTo(wordTarget);
+            int compare = currentWordTarget.compareTo(wordTarget);
 
             if (compare == 0) {
                 return word;
             } else if (compare > 0) {
-                return binaryLookup(start, mid - 1, wordTarget);
+                return binarySearchWord(start, mid - 1, wordTarget);
             } else {
-                return binaryLookup(mid + 1, end, wordTarget);
+                return binarySearchWord(mid + 1, end, wordTarget);
             }
         }
         return null;
     }
 
-    public int binarySearcher(int start, int end, String wordTarget) {
-        if (end < start) return -1;
-        int mid = start + (end - start) / 2;
-        Word word = words.get(mid);
-        String currentSpelling = word.getWordTarget();
-        if (currentSpelling.startsWith(wordTarget)) {
-            return mid;
-        }
-        int compare = currentSpelling.compareTo(wordTarget);
-        if (compare == 0) return mid;
-        if (compare > 0) return binarySearcher(start, mid - 1, wordTarget);
-        return binarySearcher(mid + 1, end, wordTarget);
-    }
+    /**
+     * returns list of 15 words starting with wordTarget.
+     */
+    public ObservableList<String> searcherWord(String wordTarget) {
+        ObservableList<String> result = FXCollections.observableArrayList();
 
-    public Word lookupWord(String wordTarget) {
-        for (Word w : this) {
-            if (wordTarget.equals(w.getWordTarget())) {
-                return w;
-            }
-        }
+        // Binary search for the starting index of wordTarget
+        int index = binarySearchIndex(0, words.size() - 1, wordTarget);
 
-        return null;
-//        return binaryLookup(0, this.size() - 1, wordTarget);
-    }
-
-    public ObservableList searcherWord(String wordTarget) {
-        ObservableList<Word> result = FXCollections.observableArrayList();
-        int index =  binarySearcher(0, words.size() - 1, wordTarget);
         if (index >= 0) {
-            result.add(words.get(index));
+            // Add the word at the found index
+            result.add(words.get(index).getWordTarget());
+
+            // Explore left and right for words starting with wordTarget
             int left = index - 1, right = index + 1;
 
-            while (left >= 0) {
-                Word leftWord = words.get(left--);
-                if (leftWord.getWordTarget().startsWith(wordTarget))
+            while (left >= 0 && result.size() < 15) {
+                String leftWord = words.get(left--).getWordTarget();
+                if (leftWord.startsWith(wordTarget)) {
                     result.add(leftWord);
-                else
+                } else {
                     break;
+                }
+            }
+            while (right < words.size() && result.size() < 15) {
+                String rightWord = words.get(right++).getWordTarget();
+                if (rightWord.startsWith(wordTarget)) {
+                    result.add(rightWord);
+                } else {
+                    break;
+                }
             }
 
-            int length = words.size();
-            while (right < length) {
-                Word leftWord = words.get(right++);
-                if (leftWord.getWordTarget().startsWith(wordTarget))
-                    result.add(leftWord);
-                else
-                    break;
-            }
+            // Sort the result list alphabetically
+            result.sort(String::compareTo);
         }
+
         return result;
     }
 
@@ -110,7 +104,7 @@ public class Dictionary extends ArrayList<Word> {
     }
 
     public void setAllWords(ArrayList<Word> words) {
-        this.words = words;
+        Dictionary.words = words;
     }
 
 
